@@ -2,6 +2,7 @@ package day01
 
 fun readFileAsLinesUsingGetResourceAsStream(fileName: String)
         = ClassLoader.getSystemClassLoader().getResourceAsStream(fileName).bufferedReader()
+
 fun isGreaterThan(x: Int): Int =  when {
     x > 0 -> 1
     x < 0 -> 0
