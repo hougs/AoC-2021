@@ -21,7 +21,9 @@ sourceSets {
 
 dependencies {
     testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test"))
 }
+
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
 }
