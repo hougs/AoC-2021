@@ -20,8 +20,11 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile>() {
