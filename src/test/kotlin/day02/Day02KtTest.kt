@@ -1,10 +1,10 @@
 package day02
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-internal class Day02KtTest {
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-    @Test
-    fun computeFinalPositionWAim() {
+class MyTests: StringSpec({
+    "length should return size of string" {
+        "hello".length shouldBe 5
     }
-}
+})
