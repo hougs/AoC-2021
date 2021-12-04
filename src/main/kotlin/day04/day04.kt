@@ -28,15 +28,16 @@ class BingoBoard(val board: ArrayList<ArrayList<Int>>) {
             if (board[i].indexOf(value) != -1) {
                 foundRowSum[i] += 1
                 foundColSum[board[i].indexOf(value)] += 1
-                if (!hasBingoed) numbersMatched.add(value)
+                if (!hasBingoed) {numbersMatched.add(value)}
             }
         }
     }
 
     // return index of row of column that won
     fun checkBingo(): Boolean {
-        hasBingoed = true
-        return (foundColSum.indexOf(5) != -1) or (foundRowSum.indexOf(5) != -1)
+        val bingoBool = (foundColSum.indexOf(5) != -1) or (foundRowSum.indexOf(5) != -1)
+        hasBingoed = bingoBool
+        return bingoBool
     }
 
     fun sumRemainingElements(): Int {
@@ -64,11 +65,11 @@ fun findFirstWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: Lis
 fun findLastWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>): Pair<BingoBoard, Int> {
     val winningBoardsAndVals: ArrayList<Pair<BingoBoard, Int>> = arrayListOf()
     val numberIter = numbersCalled.iterator()
-    while (numberIter.hasNext() && bingoBoards.size != 0) {
+    while (numberIter.hasNext()) {
         val valueToCheck = numberIter.next()
         for (bingoBoard in bingoBoards) {
             bingoBoard.markValue(valueToCheck)
-            if (bingoBoard.checkBingo() && !winningBoardsAndVals.contains(bingoBoard)) {
+            if (bingoBoard.checkBingo()) {
                 winningBoardsAndVals.add(Pair(bingoBoard, valueToCheck))
             }
         }
@@ -79,6 +80,8 @@ fun findLastWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List
 fun solveP1(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>){
     val pairs = findFirstWinningBoard(bingoBoards, numbersCalled)
     val sumElems = pairs.first.sumRemainingElements() - pairs.first.numbersMatched.sum()
+    println(pairs.first.numbersMatched)
+    println("sum of elems is $sumElems, not 668")
     val valueWonOn = pairs.second
     val finalScore = sumElems * valueWonOn
     println("P1 Final score is $finalScore")
