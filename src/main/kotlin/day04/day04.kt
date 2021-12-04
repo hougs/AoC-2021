@@ -20,6 +20,7 @@ class BingoBoard(val board: ArrayList<ArrayList<Int>>) {
     val foundRowSum: ArrayList<Int> = arrayListOf(0,0,0,0,0)
     val foundColSum: ArrayList<Int> = arrayListOf(0,0,0,0,0)
     val numbersMatched: ArrayList<Int> = arrayListOf()
+    var hasBingoed = false
 
     fun markValue(value: Int) {
         // iterate through rows
@@ -27,13 +28,14 @@ class BingoBoard(val board: ArrayList<ArrayList<Int>>) {
             if (board[i].indexOf(value) != -1) {
                 foundRowSum[i] += 1
                 foundColSum[board[i].indexOf(value)] += 1
-                numbersMatched.add(value)
+                if (!hasBingoed) numbersMatched.add(value)
             }
         }
     }
 
     // return index of row of column that won
     fun checkBingo(): Boolean {
+        hasBingoed = true
         return (foundColSum.indexOf(5) != -1) or (foundRowSum.indexOf(5) != -1)
     }
 
@@ -44,7 +46,7 @@ class BingoBoard(val board: ArrayList<ArrayList<Int>>) {
     }
 }
 
-fun findWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>): Pair<BingoBoard, Int> {
+fun findFirstWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>): Pair<BingoBoard, Int> {
     var winningBoard = bingoBoards[0]
     val numberIter = numbersCalled.iterator()
     while (numberIter.hasNext()) {
@@ -59,6 +61,37 @@ fun findWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int
     return Pair(winningBoard, -1)
 }
 
+fun findLastWinningBoard(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>): Pair<BingoBoard, Int> {
+    val winningBoardsAndVals: ArrayList<Pair<BingoBoard, Int>> = arrayListOf()
+    val numberIter = numbersCalled.iterator()
+    while (numberIter.hasNext() && bingoBoards.size != 0) {
+        val valueToCheck = numberIter.next()
+        for (bingoBoard in bingoBoards) {
+            bingoBoard.markValue(valueToCheck)
+            if (bingoBoard.checkBingo() && !winningBoardsAndVals.contains(bingoBoard)) {
+                winningBoardsAndVals.add(Pair(bingoBoard, valueToCheck))
+            }
+        }
+    }
+    return winningBoardsAndVals.last()
+}
+
+fun solveP1(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>){
+    val pairs = findFirstWinningBoard(bingoBoards, numbersCalled)
+    val sumElems = pairs.first.sumRemainingElements() - pairs.first.numbersMatched.sum()
+    val valueWonOn = pairs.second
+    val finalScore = sumElems * valueWonOn
+    println("P1 Final score is $finalScore")
+}
+
+fun solveP2(bingoBoards: ArrayList<BingoBoard>, numbersCalled: List<Int>){
+    val pairs = findLastWinningBoard(bingoBoards, numbersCalled)
+    val sumElems = pairs.first.sumRemainingElements() - pairs.first.numbersMatched.sum()
+    val valueWonOn = pairs.second
+    val finalScore = sumElems * valueWonOn
+    println("P2 Final score is $finalScore")
+}
+
 fun main() {
     val input = day01.readFileAsLinesUsingGetResourceAsStream("inputday04.txt").readLines()
     val numbersCalled: List<Int> = input[0].split(",").map { x -> x.toInt() }
@@ -66,12 +99,6 @@ fun main() {
     for (i in 2..596 step 6) {
         bingoBoards.add(BingoBoardManager.makeBingoBoard(input.subList(i, i + 5)))
     }
-    val pairs = findWinningBoard(bingoBoards, numbersCalled)
-    println(pairs.first.numbersMatched.sum())
-    val sumElems = pairs.first.sumRemainingElements() - pairs.first.numbersMatched.sum()
-    val valueWonOn = pairs.second
-    val finalScore = sumElems * valueWonOn
-    println("Sum of remaining elements $sumElems")
-    println("Values won on $valueWonOn")
-    println("Final score is $finalScore")
+    solveP1(bingoBoards, numbersCalled)
+    solveP2(bingoBoards, numbersCalled)
 }
