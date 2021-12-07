@@ -23,7 +23,7 @@ enum class DistanceFunction { Euclidean, Sum}
 fun distanceFunc(x: Int, y: Int, distanceType: DistanceFunction): Int {
     val dist = when (distanceType) {
         DistanceFunction.Euclidean -> abs(x - y)
-        DistanceFunction.Sum -> (1..abs(x - y)).sum()
+        DistanceFunction.Sum -> abs(x - y)*(abs(x - y) + 1)/2
     }
     return dist
 }
